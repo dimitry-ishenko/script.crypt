@@ -11,16 +11,15 @@ res_path = addon_path + "/resources"
 def run(args):
     try:
         proc = subprocess.run(args, capture_output=True)
-        if not proc.returncode:
-            return True, proc.stdout
-        error = proc.stderr
+        if not proc.returncode: return True, proc.stdout
+        err = proc.stderr
     except Exception as e:
-        error = str(e)
+        err = str(e)
 
-    xbmcgui.Dialog().notification("Crypt", error, xbmcgui.NOTIFICATION_ERROR)
+    xbmcgui.Dialog().notification("Crypt", err, xbmcgui.NOTIFICATION_ERROR)
     return False, None
 
-def umount(path):
+def unmount(path):
     success, output = run(["udisksctl", "unmount", "--block-device", path])
     if success:
         xbmcgui.Dialog().notification("Crypt", output)
@@ -125,7 +124,7 @@ if __name__ == "__main__":
 
             if mount_path:
                 if xbmcgui.Dialog().yesno("Crypt", "Unmount & lock " + label + "?", defaultbutton=xbmcgui.DLG_YESNO_YES_BTN):
-                    umount(crypt_path) and lock(drive_path)
+                    unmount(crypt_path) and lock(drive_path)
 
             elif crypt_path:
                 if xbmcgui.Dialog().yesno("Crypt", "Lock " + label + "?", defaultbutton=xbmcgui.DLG_YESNO_YES_BTN):
